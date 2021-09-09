@@ -6,13 +6,17 @@ import 'package:get/route_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mobileapp/common/theme/app_theme.dart';
 import 'package:mobileapp/data/service/account_service.dart';
+import 'package:mobileapp/data/service/file_service.dart';
 import 'package:mobileapp/data/service/local_service.dart';
+import 'package:mobileapp/data/service/page_service.dart';
 import 'package:mobileapp/data/service/theme_service.dart';
 import 'package:mobileapp/routes/app_pages.dart';
 
 void mainDelegate() async {
   Get.put<LocalService>(LocalService(), permanent: true);
   Get.put<AccountService>(AccountService(localService: Get.find()), permanent: true);
+  Get.put<PageService>(PageService(), permanent: true);
+  Get.lazyPut<FileService>(() => FileService());
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.white, // Color for Android

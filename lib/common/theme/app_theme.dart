@@ -6,7 +6,7 @@ final ThemeData appThemeData = ThemeData(
   backgroundColor: BACKGROUND_2,
   unselectedWidgetColor:Colors.white,
   accentColor: Colors.grey,
-  fontFamily: 'Lato',
+  fontFamily: 'Soleil',
   textTheme: TextTheme(
     headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
   ),

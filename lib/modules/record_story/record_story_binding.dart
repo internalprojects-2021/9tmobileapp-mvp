@@ -5,7 +5,7 @@ class RecordStoryBinding implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut(
-      () => RecordStoryController(),
+      () => RecordStoryController(pageService: Get.find(), fileService: Get.find()),
     );
   }
 }

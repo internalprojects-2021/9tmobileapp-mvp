@@ -8,13 +8,13 @@ class Themes{
     backgroundColor: LIGHT_BACKGROUND_2,
     unselectedWidgetColor:Colors.white,
     textTheme: ThemeData.light().textTheme.apply(
-      fontFamily: 'Lato',
+      fontFamily: 'Soleil',
     ),
     primaryTextTheme: ThemeData.light().textTheme.apply(
-      fontFamily: 'Lato',
+      fontFamily: 'Soleil',
     ),
     accentTextTheme: ThemeData.light().textTheme.apply(
-      fontFamily: 'Lato',
+      fontFamily: 'Soleil',
     ),
     appBarTheme: AppBarTheme(
     ),
@@ -25,13 +25,13 @@ class Themes{
     backgroundColor: BACKGROUND_2,
     unselectedWidgetColor:Colors.white,
     textTheme: ThemeData.light().textTheme.apply(
-      fontFamily: 'Lato',
+      fontFamily: 'Soleil',
     ),
     primaryTextTheme: ThemeData.light().textTheme.apply(
-      fontFamily: 'Lato',
+      fontFamily: 'Soleil',
     ),
     accentTextTheme: ThemeData.light().textTheme.apply(
-      fontFamily: 'Lato',
+      fontFamily: 'Soleil',
     ),
     appBarTheme: AppBarTheme(
 
