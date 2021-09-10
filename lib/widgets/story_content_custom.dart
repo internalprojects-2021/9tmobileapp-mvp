@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+
 import 'package:mobileapp/common/theme/color.dart';
 import 'package:mobileapp/widgets/image_network_custom.dart';
 
 class StoryContentCustom extends StatefulWidget {
   final String? pageThumbnail;
   final String enText;
+  final Function onListen;
   StoryContentCustom({
     Key? key,
     this.pageThumbnail,
     required this.enText,
+    required this.onListen,
   }) : super(key: key);
 
   @override
@@ -46,7 +49,9 @@ class _StoryContentCustomState extends State<StoryContentCustom> {
                               fontSize: 16,
                               fontWeight: FontWeight.bold)),
                       GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            widget.onListen();
+                          },
                           child: Row(children: [
                             Image.asset(
                               "assets/icons/volume_icon.png",
