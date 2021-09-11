@@ -6,11 +6,11 @@ import 'package:mobileapp/modules/record_story/record_story_controller.dart';
 class RecordStoryBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => RecordService());
+    Get.lazyPut(() => RecordService(fileService: Get.find()));
     Get.lazyPut(() => SoundService());
     Get.lazyPut(
       () => RecordStoryController(
-          storyService: Get.find(), fileService: Get.find(), recordService: Get.find(), soundService: Get.find()),
+          accountService: Get.find(), storyService: Get.find(), recordService: Get.find(), soundService: Get.find()),
     );
   }
 }

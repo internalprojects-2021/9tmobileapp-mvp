@@ -1,8 +1,15 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:mobileapp/data/common/base_service.dart';
+import 'package:mobileapp/data/service/file_service.dart';
 import 'package:record/record.dart';
 
 class RecordService extends BaseService {
+  FileService fileService;
+
+  RecordService({required this.fileService});
+
   Record audioRecorder = Record();
   RxBool isRecording = false.obs;
   RxBool hasRecorded = false.obs;
@@ -50,6 +57,27 @@ class RecordService extends BaseService {
     hasRecorded.value = false;
     latestRecoredPath = null;
     return Future;
+  }
+
+  Future<String> getRecordPath(String userId, String storyId, int pageIndex) async {
+    var rootPath = await fileService.getRootPath();
+    return rootPath + "/" + userId + "/" + storyId + "/" + 'page${pageIndex}.m4a';
+  }
+
+  /// Save record version
+  Future<String> saveStoryRecord(String userId, String storyId, int pageIndex, String recordPath) async {
+    var fullPath = await fileService.createFilePath('$userId/$storyId', 'page${pageIndex}.m4a');
+    fileService.copy(recordPath, fullPath);
+    return fullPath;
+  }
+
+  void deleteStoryRecord(String fullPath) {
+    var f = File(fullPath);
+    if (f.existsSync()) f.deleteSync();
+  }
+
+  Future<String> getTempRecordPath() {
+    return fileService.getFilePath("temp_record.m4a");
   }
 
   @override

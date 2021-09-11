@@ -21,67 +21,66 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
 
   Widget renderContentView(Story story) {
     List<StoryPage> pages = story.pages!;
-    return Column(
+    return Stack(
       children: [
-        Expanded(
-            child: Column(children: [
+        Column(children: [
           Obx(() {
-            return AppBarCustom(
-              onBack: () {},
-              onMenu: () {},
-              title: "Page ${controller.pageIndex.value + 1}/${pages.length}",
-            );
+        return AppBarCustom(
+          onBack: () {},
+          onMenu: () {},
+          title: "Page ${controller.pageIndex.value + 1}/${pages.length}",
+        );
           }),
           Expanded(
-              child: Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              if (index == pages.length - 1) {
-                return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(color: LIGHT_YELLOW, borderRadius: BorderRadius.circular(16)),
-                    child: Text("The End", style: TextStyle(color: OLIVE, fontSize: 40, fontWeight: FontWeight.bold)));
-              }
-              return StoryContentCustom(
-                onListen: () {
-                  controller.playSound(pages[index].enUrl!);
-                },
-                pageThumbnail: pages[controller.pageIndex.value].pageThumbnail,
-                enText: pages[controller.pageIndex.value].enText!,
-              );
+          child: Swiper(
+        itemBuilder: (BuildContext context, int index) {
+          if (index == pages.length - 1) {
+            return Container(
+                margin: EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: LIGHT_YELLOW, borderRadius: BorderRadius.circular(16)),
+                child: Text("The End", style: TextStyle(color: OLIVE, fontSize: 40, fontWeight: FontWeight.bold)));
+          }
+          return StoryContentCustom(
+            onListen: () {
+              controller.playSound(pages[index].enUrl!);
             },
-            itemCount: pages.length,
-            onIndexChanged: (index) {
-              controller.pageIndex.value = index;
-              controller.resetRecordDefault();
-              if (index == pages.length - 1) {
-                controller.isLastPage.value = true;
-              }
-            },
+            pageThumbnail: pages[controller.pageIndex.value].pageThumbnail,
+            enText: pages[controller.pageIndex.value].enText!,
+          );
+        },
+        itemCount: pages.length,
+        onIndexChanged: (index) {
+          controller.pageIndex.value = index;
+          controller.resetRecordDefault();
+          if (index == pages.length - 1) {
+            controller.isLastPage.value = true;
+          }
+        },
           )),
           Obx(() {
-            if (controller.pageIndex.value == pages.length - 1) {
-              return SizedBox(
-                height: 120,
-                child: Container(
-                  width: Get.width,
-                  margin: EdgeInsets.symmetric(vertical: 35, horizontal: 16),
-                  child: ButtonNormalCustom(
-                      onTap: () {},
-                      child: Text("Done", style: TextStyle(color: WHITE, fontSize: 16)),
-                      color: BRIGHT_YELLOW),
-                ),
-              );
-            }
-            return controlContainer();
+        if (controller.pageIndex.value == pages.length - 1) {
+          return SizedBox(
+            height: 120,
+            child: Container(
+              width: Get.width,
+              margin: EdgeInsets.symmetric(vertical: 35, horizontal: 16),
+              child: ButtonNormalCustom(
+                  onTap: () {},
+                  child: Text("Done", style: TextStyle(color: WHITE, fontSize: 16)),
+                  color: BRIGHT_YELLOW),
+            ),
+          );
+        }
+        return controlContainer();
           })
-        ])),
+        ]),
         Obx(() {
           if (controller.countDownRecord.value == -1) {
             return Container();
           }
           return Container(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.4),
             child: Center(
                 child: Text(
               controller.countDownRecord.value.toString(),
@@ -115,7 +114,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                   ButtonCircleCustom(
                       color: ERROR,
-                      onTap: isRecored
+                      onTap: controller.isShowTrashButton
                           ? () {
                               controller.deleteRecord();
                             }
@@ -126,7 +125,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
                         width: 20,
                       )),
                   Obx(() {
-                    if (isRecored) {
+                    if (controller.isShowPlayButton) {
                       return ButtonCircleCustom(
                           color: OLIVE,
                           onTap: () {
@@ -159,7 +158,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
                   }),
                   ButtonCircleCustom(
                       color: BRIGHT_YELLOW,
-                      onTap: isRecored
+                      onTap: controller.isShowSaveButton
                           ? () {
                               controller.saveRecord();
                             }
@@ -169,7 +168,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
               );
             }),
             Obx(() {
-              if (!controller.recordService.hasRecorded.value) {
+              if (!controller.isShowPlayerProgress) {
                 return Container();
               }
               return Expanded(

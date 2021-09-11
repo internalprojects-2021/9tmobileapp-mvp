@@ -7,7 +7,7 @@ class SplashBinding implements Bindings {
   void dependencies() {
     Get.lazyPut<LocalService>(() => LocalService());
     Get.lazyPut(
-      () => SplashController(localService: Get.find()),
+      () => SplashController(localService: Get.find(), accountService: Get.find()),
     );
   }
 }
