@@ -1,7 +1,7 @@
 import 'package:mobileapp/data/common/base_service.dart';
 import 'package:mobileapp/data/models/page.dart';
 
-class PageService extends BaseService {
+class BookService extends BaseService {
   List<Page> getpageList() {
     return [
       Page(

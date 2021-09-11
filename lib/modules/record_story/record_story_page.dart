@@ -26,8 +26,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
             return AppBarCustom(
               onBack: () {},
               onMenu: () {},
-              title:
-                  "Page ${controller.indexPage.value + 1}/${controller.getPageList.length}",
+              title: "Page ${controller.pageIndex.value + 1}/${controller.getPageList.length}",
             );
           }),
           Expanded(
@@ -37,28 +36,20 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
                 return Container(
                     margin: EdgeInsets.symmetric(horizontal: 16),
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: LIGHT_YELLOW,
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Text("The End",
-                        style: TextStyle(
-                            color: OLIVE,
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold)));
+                    decoration: BoxDecoration(color: LIGHT_YELLOW, borderRadius: BorderRadius.circular(16)),
+                    child: Text("The End", style: TextStyle(color: OLIVE, fontSize: 40, fontWeight: FontWeight.bold)));
               }
               return StoryContentCustom(
-                onListen: (){
-                  controller.listen(controller.getPageList[index].enUrl!);
+                onListen: () {
+                  controller.playSound(controller.getPageList[index].enUrl!);
                 },
-                pageThumbnail: controller
-                    .getPageList[controller.indexPage.value].pageThumbnail,
-                enText:
-                    controller.getPageList[controller.indexPage.value].enText!,
+                pageThumbnail: controller.getPageList[controller.pageIndex.value].pageThumbnail,
+                enText: controller.getPageList[controller.pageIndex.value].enText!,
               );
             },
             itemCount: controller.getPageList.length,
             onIndexChanged: (index) {
-              controller.indexPage.value = index;
+              controller.pageIndex.value = index;
               controller.resetRecordDefault();
               if (index == controller.getPageList.length - 1) {
                 controller.isLastPage.value = true;
@@ -66,8 +57,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
             },
           )),
           Obx(() {
-            if (controller.indexPage.value ==
-                controller.getPageList.length - 1) {
+            if (controller.pageIndex.value == controller.getPageList.length - 1) {
               return SizedBox(
                 height: 120,
                 child: Container(
@@ -75,26 +65,24 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
                   margin: EdgeInsets.symmetric(vertical: 35, horizontal: 16),
                   child: ButtonNormalCustom(
                       onTap: () {},
-                      child: Text("Done",
-                          style: TextStyle(color: WHITE, fontSize: 16)),
+                      child: Text("Done", style: TextStyle(color: WHITE, fontSize: 16)),
                       color: BRIGHT_YELLOW),
                 ),
               );
             }
-            return controls();
+            return controlContainer();
           })
         ])),
         Obx(() {
-          if (!controller.displayWaitWidget.value) {
+          if (controller.countDownRecord.value == -1) {
             return Container();
           }
           return Container(
             color: Colors.black.withOpacity(0.2),
             child: Center(
                 child: Text(
-              controller.time.value.toString(),
-              style: TextStyle(
-                  color: WHITE, fontSize: 100, fontWeight: FontWeight.bold),
+              controller.countDownRecord.value.toString(),
+              style: TextStyle(color: WHITE, fontSize: 100, fontWeight: FontWeight.bold),
             )),
           );
         })
@@ -102,7 +90,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
     )));
   }
 
-  Widget controls() {
+  Widget controlContainer() {
     return Container(
       height: 120,
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -118,81 +106,75 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Obx(() {
-              bool isRecored = controller.isRecorded.value;
+              bool isRecored = controller.recordService.hasRecorded.value;
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 76),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ButtonCircleCustom(
-                          color: ERROR,
-                          onTap: isRecored
-                              ? () {
-                                  controller.deleteRecord();
-                                }
-                              : null,
-                          child: Image.asset(
-                            "assets/icons/bin_icon.png",
-                            color: GREY_5,
-                            width: 20,
-                          )),
-                      Obx(() {
-                        if (isRecored) {
-                          return ButtonCircleCustom(
-                              color: OLIVE,
-                              onTap: () {
-                                controller.playFileRecord();
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  ButtonCircleCustom(
+                      color: ERROR,
+                      onTap: isRecored
+                          ? () {
+                              controller.deleteRecord();
+                            }
+                          : null,
+                      child: Image.asset(
+                        "assets/icons/bin_icon.png",
+                        color: GREY_5,
+                        width: 20,
+                      )),
+                  Obx(() {
+                    if (isRecored) {
+                      return ButtonCircleCustom(
+                          color: OLIVE,
+                          onTap: () {
+                            controller.playFileRecord();
+                          },
+                          child: Icon(
+                            _buildIconPlayer(),
+                            color: WHITE,
+                          ));
+                    }
+                    return ButtonCircleCustom(
+                        color: controller.recordService.isRecording.value ? ERROR : BRIGHT_YELLOW,
+                        onTap: controller.recordService.isRecording.value
+                            ? () {
+                                controller.stopRecord();
+                              }
+                            : () {
+                                controller.startRecord();
                               },
-                              child: Icon(
-                                _buildIconPlayer(),
-                                color: WHITE,
+                        child: controller.recordService.isRecording.value
+                            ? Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(color: WHITE, borderRadius: BorderRadius.circular(5)),
+                              )
+                            : CircleAvatar(
+                                radius: 10,
+                                backgroundColor: WHITE,
                               ));
-                        }
-                        return ButtonCircleCustom(
-                            color: controller.isRecording.value
-                                ? ERROR
-                                : BRIGHT_YELLOW,
-                            onTap: controller.isRecording.value
-                                ? () {
-                                    controller.stopRecord();
-                                  }
-                                : () {
-                                    controller.startRecord();
-                                  },
-                            child: controller.isRecording.value
-                                ? Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                        color: WHITE,
-                                        borderRadius: BorderRadius.circular(5)),
-                                  )
-                                : CircleAvatar(
-                                    radius: 10,
-                                    backgroundColor: WHITE,
-                                  ));
-                      }),
-                      ButtonCircleCustom(
-                          color: BRIGHT_YELLOW,
-                          onTap: isRecored
-                              ? () {
-                                  controller.saveRecord();
-                                }
-                              : null,
-                          child: Icon(Icons.check, color: GREY_5))
-                    ]),
+                  }),
+                  ButtonCircleCustom(
+                      color: BRIGHT_YELLOW,
+                      onTap: isRecored
+                          ? () {
+                              controller.saveRecord();
+                            }
+                          : null,
+                      child: Icon(Icons.check, color: GREY_5))
+                ]),
               );
             }),
             Obx(() {
-              if (!controller.isRecorded.value) {
+              if (!controller.recordService.hasRecorded.value) {
                 return Container();
               }
               return Expanded(
                   child: Container(
                 margin: EdgeInsets.only(top: 16),
                 child: ProgressBarCustom(
-                  position: controller.position.value,
-                  duration: controller.duration.value,
+                  position: controller.soundService.position.value,
+                  duration: controller.soundService.duration.value,
                 ),
               ));
             })
@@ -203,7 +185,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
   }
 
   IconData _buildIconPlayer() {
-    switch (controller.playerState.value) {
+    switch (controller.soundService.playerState.value) {
       case PlayerState.PLAYING:
         return Icons.pause;
       case PlayerState.PAUSED:

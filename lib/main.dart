@@ -8,14 +8,14 @@ import 'package:mobileapp/common/theme/app_theme.dart';
 import 'package:mobileapp/data/service/account_service.dart';
 import 'package:mobileapp/data/service/file_service.dart';
 import 'package:mobileapp/data/service/local_service.dart';
-import 'package:mobileapp/data/service/page_service.dart';
+import 'package:mobileapp/data/service/book_service.dart';
 import 'package:mobileapp/data/service/theme_service.dart';
 import 'package:mobileapp/routes/app_pages.dart';
 
 void mainDelegate() async {
   Get.put<LocalService>(LocalService(), permanent: true);
   Get.put<AccountService>(AccountService(localService: Get.find()), permanent: true);
-  Get.put<PageService>(PageService(), permanent: true);
+  Get.put<BookService>(BookService(), permanent: true);
   Get.lazyPut<FileService>(() => FileService());
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(

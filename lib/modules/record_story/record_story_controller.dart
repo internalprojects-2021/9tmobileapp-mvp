@@ -1,45 +1,40 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
+import 'package:mobileapp/data/service/record_service.dart';
+import 'package:mobileapp/data/service/sound_service.dart';
 import 'package:mobileapp/widgets/toast_custom.dart';
-import 'package:record/record.dart';
 import 'package:mobileapp/data/models/page.dart';
 import 'package:mobileapp/data/service/file_service.dart';
-import 'package:mobileapp/data/service/page_service.dart';
+import 'package:mobileapp/data/service/book_service.dart';
 
 class RecordStoryController extends GetxController {
-  PageService pageService;
+  BookService pageService;
   FileService fileService;
-  RecordStoryController({
-    required this.pageService,
-    required this.fileService,
-  });
-  Record audioRecorder = Record();
-  AudioPlayer audioPlayer = AudioPlayer();
-  AudioPlayer audioPlayerListen = AudioPlayer();
-  List<Page> get getPageList => pageService.getpageList();
-  RxInt indexPage = 0.obs;
-  RxBool isLastPage = false.obs;
-  Timer? timer;
-  RxInt time = 0.obs;
-  RxBool displayWaitWidget = false.obs;
-  RxBool isRecording = false.obs;
-  RxBool isRecorded = false.obs;
-  RxString localPath = "".obs;
-  RxBool isPlaying = false.obs;
-  Rx<Duration?> position = Rx<Duration?>(Duration());
-  Rx<Duration?> duration = Rx<Duration?>(null);
-  Rx<PlayerState> playerState = Rx<PlayerState>(PlayerState.COMPLETED);
+  RecordService recordService;
+  SoundService soundService;
 
-  Future runWaitTime() async {
-    time.value = 3;
-    displayWaitWidget.value = true;
+  RecordStoryController(
+      {required this.pageService, required this.fileService, required this.recordService, required this.soundService});
+
+  // For page UI control
+  List<Page> get getPageList => pageService.getpageList();
+  RxInt pageIndex = 0.obs;
+  RxBool isLastPage = false.obs;
+
+  // For countdown UI
+  Timer? countDownTimer;
+  RxInt countDownRecord = (-1).obs; // -1 if don't record event
+
+  // For record
+  String? recordPath;
+
+  Future countDown() async {
+    countDownRecord.value = 3;
     Completer c = new Completer();
-    Timer.periodic(Duration(seconds: 1), (timer) async {
-      if (time.value != 0) {
-        time.value--;
-      } else {
-        displayWaitWidget.value = false;
+    countDownTimer = Timer.periodic(Duration(seconds: 1), (timer) async {
+      countDownRecord.value--;
+      if (countDownRecord.value == -1) {
         timer.cancel();
         c.complete();
       }
@@ -47,52 +42,27 @@ class RecordStoryController extends GetxController {
     return c.future;
   }
 
-  Future<void> startRecord() async {
-    try {
-      if (await audioRecorder.hasPermission()) {
-        await runWaitTime();
-        isRecording.value = await audioRecorder.isRecording();
-        isRecording.value = true;
-        await audioRecorder.start(
-            path: await fileService.getFilePath("demo.m4a"),
-            encoder: AudioEncoder.AAC,
-            bitRate: 128000,
-            samplingRate: 44100);
-      }
-    } catch (e) {
-      print(e);
-    }
+  Future startRecord() async {
+    await countDown();
+    recordPath = await fileService.getFilePath("record.m4a");
+    return recordService.record(recordPath!);
   }
 
-  Future<void> stopRecord() async {
-    final path = await audioRecorder.stop();
-    localPath.value = path!;
-    isRecording.value = false;
-    isRecorded.value = true;
-  }
-
-  playPlayer() async {
-    int result = await audioPlayer.play(localPath.value, isLocal: true);
-  }
-
-  pausePlayer() async {
-    int result = await audioPlayer.pause();
-  }
-
-  resumePlayer() async {
-    int result = await audioPlayer.resume();
+  Future stopRecord() {
+    return recordService.stop();
   }
 
   playFileRecord() {
-    switch (playerState.value) {
+    switch (soundService.playerState.value) {
       case PlayerState.PLAYING:
-        pausePlayer();
+        soundService.pause();
         break;
       case PlayerState.PAUSED:
-        resumePlayer();
+        soundService.resume();
         break;
       default:
-        playPlayer();
+        playRecordedFile();
+        break;
     }
   }
 
@@ -106,38 +76,29 @@ class RecordStoryController extends GetxController {
     showToast("Record was deleted");
   }
 
-  resetRecordDefault() async {
-    int result = await audioPlayer.stop();
-    isRecorded.value = false;
-    isRecorded.refresh();
-    position.value = null;
-    duration.value = null;
+  Future resetRecordDefault() async {
+    await soundService.stop();
+    recordService.clean();
+    return Future;
   }
 
-  listen(String url) async {
-    await audioPlayerListen.setVolume(1);
-    int result = await audioPlayerListen.play(url);
-    if (result == 1) {
-      
-    }
+  playSound(String url) async {
+    await soundService.playUrl(url);
   }
 
-  stopListen() async {
-    int result = await audioPlayerListen.stop();
+  playRecordedFile() {
+    soundService.playLocalPath(recordPath!);
+  }
+
+  stopSound() async {
+    int result = await soundService.stop();
   }
 
   @override
-  void onInit() {
-    audioPlayer.onDurationChanged.listen((Duration d) {
-      duration.value = d;
-    });
-    audioPlayer.onAudioPositionChanged.listen((Duration p) {
-      position.value = p;
-      print(position.value);
-    });
-    audioPlayer.onPlayerStateChanged.listen((PlayerState s) {
-      playerState.value = s;
-    });
-    super.onInit();
+  void onClose() {
+    countDownTimer?.cancel();
+    recordService.stop();
+    soundService.stop();
+    super.onClose();
   }
 }
