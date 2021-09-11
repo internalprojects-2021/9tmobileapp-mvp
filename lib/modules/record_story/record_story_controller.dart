@@ -1,24 +1,24 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
+import 'package:mobileapp/data/models/story.dart';
 import 'package:mobileapp/data/service/record_service.dart';
 import 'package:mobileapp/data/service/sound_service.dart';
 import 'package:mobileapp/widgets/toast_custom.dart';
-import 'package:mobileapp/data/models/page.dart';
 import 'package:mobileapp/data/service/file_service.dart';
-import 'package:mobileapp/data/service/book_service.dart';
+import 'package:mobileapp/data/service/story_service.dart';
 
 class RecordStoryController extends GetxController {
-  BookService pageService;
+  StoryService storyService;
   FileService fileService;
   RecordService recordService;
   SoundService soundService;
 
   RecordStoryController(
-      {required this.pageService, required this.fileService, required this.recordService, required this.soundService});
+      {required this.storyService, required this.fileService, required this.recordService, required this.soundService});
 
   // For page UI control
-  List<Page> get getPageList => pageService.getpageList();
+  Rx<Story?> story = Rx(null);
   RxInt pageIndex = 0.obs;
   RxBool isLastPage = false.obs;
 
@@ -92,6 +92,18 @@ class RecordStoryController extends GetxController {
 
   stopSound() async {
     int result = await soundService.stop();
+  }
+
+  Future loadStory() async {
+    try {
+      story.value = await storyService.getStory();
+    } catch (e) {}
+  }
+
+  @override
+  void onReady() {
+    loadStory();
+    super.onReady();
   }
 
   @override

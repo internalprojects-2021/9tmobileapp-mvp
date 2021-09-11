@@ -7,25 +7,27 @@ part of 'rest_api.dart';
 // **************************************************************************
 
 class _RestAPI implements RestAPI {
-  _RestAPI(this._dio, {this.baseUrl});
+  _RestAPI(this._dio, {this.baseUrl}) {
+    baseUrl ??= 'https://api.npoint.io/2f7382f24a63d233653f/data';
+  }
 
   final Dio _dio;
 
   String? baseUrl;
 
   @override
-  Future<BaseResponse<dynamic>> googleLogin(body) async {
+  Future<Story> getStory(body) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body);
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<BaseResponse<dynamic>>(
-            Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
-                .compose(_dio.options, '/auth/login_with_google',
+        _setStreamType<Story>(
+            Options(method: 'GET', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/story',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<dynamic>.fromJson(_result.data!);
+    final value = Story.fromJson(_result.data!);
     return value;
   }
 

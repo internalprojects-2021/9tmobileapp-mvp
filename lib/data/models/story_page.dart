@@ -1,10 +1,14 @@
-class Page {
+import 'package:json_annotation/json_annotation.dart';
+
+part 'story_page.g.dart';
+
+@JsonSerializable()
+class StoryPage {
   String? type;
   String? cnUrl;
   String? delay;
   String? enUrl;
   String? viUrl;
-  String? effect;
   String? enText;
   String? userId;
   int? pageNumber;
@@ -13,13 +17,12 @@ class Page {
   String? defaultSource;
   String? pageThumbnail;
   String? collaboratorsAudio;
-  Page({
+  StoryPage({
     this.type,
     this.cnUrl,
     this.delay,
     this.enUrl,
     this.viUrl,
-    this.effect,
     this.enText,
     this.userId,
     this.pageNumber,
@@ -29,4 +32,8 @@ class Page {
     this.pageThumbnail,
     this.collaboratorsAudio,
   });
+
+  factory StoryPage.fromJson(Map<String, dynamic> json) =>
+      _$StoryPageFromJson(json);
+  Map<String, dynamic> toJson() => _$StoryPageToJson(this);
 }

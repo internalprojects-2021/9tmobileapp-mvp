@@ -10,7 +10,7 @@ class RecordStoryBinding implements Bindings {
     Get.lazyPut(() => SoundService());
     Get.lazyPut(
       () => RecordStoryController(
-          pageService: Get.find(), fileService: Get.find(), recordService: Get.find(), soundService: Get.find()),
+          storyService: Get.find(), fileService: Get.find(), recordService: Get.find(), soundService: Get.find()),
     );
   }
 }

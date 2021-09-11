@@ -4,6 +4,8 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobileapp/common/theme/color.dart';
+import 'package:mobileapp/data/models/story.dart';
+import 'package:mobileapp/data/models/story_page.dart';
 import 'package:mobileapp/modules/record_story/record_story_controller.dart';
 import 'package:mobileapp/widgets/app_bar_custom.dart';
 import 'package:mobileapp/widgets/button_circle_custom.dart';
@@ -13,26 +15,27 @@ import 'package:mobileapp/widgets/story_content_custom.dart';
 import 'package:mobileapp/widgets/wrap_page.dart';
 
 class RecordStoryPage extends GetWidget<RecordStoryController> {
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return WrapPage(
-        child: Scaffold(
-            body: Stack(
+  Widget renderLoadingView() {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  Widget renderContentView(Story story) {
+    List<StoryPage> pages = story.pages!;
+    return Column(
       children: [
-        Container(
+        Expanded(
             child: Column(children: [
           Obx(() {
             return AppBarCustom(
               onBack: () {},
               onMenu: () {},
-              title: "Page ${controller.pageIndex.value + 1}/${controller.getPageList.length}",
+              title: "Page ${controller.pageIndex.value + 1}/${pages.length}",
             );
           }),
           Expanded(
               child: Swiper(
             itemBuilder: (BuildContext context, int index) {
-              if (index == controller.getPageList.length - 1) {
+              if (index == pages.length - 1) {
                 return Container(
                     margin: EdgeInsets.symmetric(horizontal: 16),
                     alignment: Alignment.center,
@@ -41,27 +44,27 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
               }
               return StoryContentCustom(
                 onListen: () {
-                  controller.playSound(controller.getPageList[index].enUrl!);
+                  controller.playSound(pages[index].enUrl!);
                 },
-                pageThumbnail: controller.getPageList[controller.pageIndex.value].pageThumbnail,
-                enText: controller.getPageList[controller.pageIndex.value].enText!,
+                pageThumbnail: pages[controller.pageIndex.value].pageThumbnail,
+                enText: pages[controller.pageIndex.value].enText!,
               );
             },
-            itemCount: controller.getPageList.length,
+            itemCount: pages.length,
             onIndexChanged: (index) {
               controller.pageIndex.value = index;
               controller.resetRecordDefault();
-              if (index == controller.getPageList.length - 1) {
+              if (index == pages.length - 1) {
                 controller.isLastPage.value = true;
               }
             },
           )),
           Obx(() {
-            if (controller.pageIndex.value == controller.getPageList.length - 1) {
+            if (controller.pageIndex.value == pages.length - 1) {
               return SizedBox(
                 height: 120,
                 child: Container(
-                  width: size.width,
+                  width: Get.width,
                   margin: EdgeInsets.symmetric(vertical: 35, horizontal: 16),
                   child: ButtonNormalCustom(
                       onTap: () {},
@@ -87,7 +90,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
           );
         })
       ],
-    )));
+    );
   }
 
   Widget controlContainer() {
@@ -193,5 +196,15 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
       default:
         return Icons.play_arrow;
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WrapPage(child: Obx(() {
+      if (controller.story.value == null) {
+        return renderLoadingView();
+      }
+      return renderContentView(controller.story.value!);
+    }));
   }
 }
