@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobileapp/data/models/character.dart';
 import 'package:mobileapp/data/models/story_page.dart';

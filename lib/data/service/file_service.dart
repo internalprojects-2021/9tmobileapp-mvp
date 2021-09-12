@@ -54,10 +54,4 @@ class FileService extends GetxService {
     }
     return d.path;
   }
-
-  // Future<File> getRecordFile(int index) async {
-  //   String path = await getRecordAudioPath('${taskId}_$index.aac');
-  //   return File(path);
-  // }
-
 }

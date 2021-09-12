@@ -1,40 +1,36 @@
 # mobileapp project created by @WifiHouse
 
+## Preview
 
-# Preview
+|      Android version       |      iOS version       |
+| :------------------------: | :--------------------: |
+| ![](demo/android-demo.gif) | ![](demo/iOS-demo.gif) |
 
-| Android version | iOS version |
-| :--------------: | :---------------------: |
-|     ![](demo/android-demo.gif)     |    ![](demo/iOS-demo.gif)     |
+## How to test
 
-\
-\
-<br/>
-
-# How to test
 1. Input any user ID to create local account\
-Record files will be stored based on user ID
+   Record files will be stored based on user ID
 2. Tap "Skip login" to login with default user ID = "001"
 
-\
-\
 <br/>
-# How to build
 
-## 1. By command line
+## How to build
+
+### 1. By command line
 
 Staging: `flutter run -t lib/common/config/main_stag.dart`\
 Production: `flutter run -t lib/common/config/main_prod.dart`
 \
 <br/>
 
+### 2. By VisualCode
 
-## 2. By VisualCode
 Available .vscode/launch.json.\
 Run from "Run and Debug" menu
 \
 <br/>
-## 3. By AndroidStudio
+
+### 3. By AndroidStudio
 
 Setup build environment\
 Staging entry point: `lib/common/config/main_stag.dart`\
@@ -43,14 +39,16 @@ Production entry point: `lib/common/config/main_prod.dart`
 \
 \
 <br/>
-## Note Run on iOS
+
+### Note Run on iOS
+
 Please run: `cd ios && pod install`
 \
 \
 <br/>
 
+## Features
 
-# Features
 ### Display the list of story pages
 
 - [x] Display the list of story pages
@@ -73,22 +71,24 @@ Please run: `cd ios && pod install`
 - [x] Support login by any account id to test audio files management
 - [x] Play standard audio
 
-
 <br/>
 
 ### Unknown issues
 
 - [ ] Standard sound depends on sound controller
-\
-\
-<br/>
+      \
+       \
+       <br/>
 
-# Audio files structure
+## Audio files structure
+
 `..internal-package/record/<accountID>/<storyID>/<pageNumber>.m4a`
 
 Format: m4a
 \
 \
 <br/>
-# How to generate model
+
+## How to generate model
+
 `flutter pub run build_runner build --delete-conflicting-outputs`
