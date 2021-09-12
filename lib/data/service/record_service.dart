@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobileapp/data/common/base_service.dart';
 import 'package:mobileapp/data/service/file_service.dart';
 import 'package:record/record.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class RecordService extends BaseService {
   FileService fileService;
@@ -15,26 +17,29 @@ class RecordService extends BaseService {
   RxBool hasRecorded = false.obs;
   String? latestRecoredPath;
 
-  requestPermission() async {
-    var hasPermission = await audioRecorder.hasPermission();
-    if (!hasPermission) {
-      // Todo show alert can't continute
+  Future<String> get rootPath => fileService.getRootPath();
+
+  Future<bool> requestPermission() async {
+    var status = await Permission.microphone.status;
+    if (status == PermissionStatus.permanentlyDenied) {
+      await _showRequestPermission();
+      return false;
     }
+    var requestStatus = await Permission.microphone.request();
+    if (requestStatus == PermissionStatus.granted) {
+      return true;
+    }
+    await _showRequestPermission();
+    return false;
   }
 
   Future<void> record(String recordFilePath) async {
     try {
       if (await audioRecorder.hasPermission()) {
-        // await runWaitTime();
-        // isRecording.value = await audioRecorder.isRecording();
         hasRecorded.value = false;
         isRecording.value = true;
         await audioRecorder.start(
-            path: recordFilePath,
-            // path: await fileService.getFilePath("demo.m4a"),
-            encoder: AudioEncoder.AAC,
-            bitRate: 128000,
-            samplingRate: 44100);
+            path: recordFilePath, encoder: AudioEncoder.AAC, bitRate: 128000, samplingRate: 44100);
       }
     } catch (e) {
       print(e);
@@ -59,15 +64,13 @@ class RecordService extends BaseService {
     return Future;
   }
 
-  Future<String> getRecordPath(String userId, String storyId, int pageIndex) async {
-    var rootPath = await fileService.getRootPath();
-    return rootPath + "/" + userId + "/" + storyId + "/" + 'page${pageIndex}.m4a';
-  }
-
   /// Save record version
-  Future<String> saveStoryRecord(String userId, String storyId, int pageIndex, String recordPath) async {
-    var fullPath = await fileService.createFilePath('$userId/$storyId', 'page${pageIndex}.m4a');
-    fileService.copy(recordPath, fullPath);
+  String saveStoryRecord(String desPath, String tempPath) {
+    File desFile = File(desPath);
+    var folderPath = desFile.parent.path;
+    var fileName = desFile.uri.pathSegments.last;
+    var fullPath = fileService.createFilePath(folderPath, fileName);
+    fileService.copy(tempPath, fullPath);
     return fullPath;
   }
 
@@ -80,9 +83,28 @@ class RecordService extends BaseService {
     return fileService.getFilePath("temp_record.m4a");
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  Future _showRequestPermission() {
+    return showDialog(
+        context: Get.context!,
+        builder: (_) => AlertDialog(
+              title: Text('Request record permission'),
+              content: Text('App required record permission.\nPlease turn on this permisson in app setting.'),
+              actions: [
+                TextButton(
+                  child: Text("Open Settings"),
+                  onPressed: () {
+                    openAppSettings();
+                    Get.back();
+                  },
+                ),
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Get.back();
+                  },
+                )
+              ],
+            ));
   }
 
   @override

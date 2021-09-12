@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:mobileapp/data/common/base_service.dart';
 
 class SoundService extends BaseService {
-
   AudioPlayer audioPlayer = AudioPlayer();
   Rx<Duration?> position = Rx<Duration?>(Duration());
   Rx<Duration?> duration = Rx<Duration?>(null);
@@ -27,6 +26,7 @@ class SoundService extends BaseService {
 
   stop() async {
     await audioPlayer.stop();
+    await audioPlayer.release();
   }
 
   @override

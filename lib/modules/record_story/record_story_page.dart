@@ -25,54 +25,55 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
       children: [
         Column(children: [
           Obx(() {
-        return AppBarCustom(
-          onBack: () {},
-          onMenu: () {},
-          title: "Page ${controller.pageIndex.value + 1}/${pages.length}",
-        );
+            return AppBarCustom(
+              onBack: () {},
+              onMenu: () {},
+              title: "Page ${controller.pageIndex.value + 1}/${pages.length}",
+            );
           }),
           Expanded(
-          child: Swiper(
-        itemBuilder: (BuildContext context, int index) {
-          if (index == pages.length - 1) {
-            return Container(
-                margin: EdgeInsets.symmetric(horizontal: 16),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(color: LIGHT_YELLOW, borderRadius: BorderRadius.circular(16)),
-                child: Text("The End", style: TextStyle(color: OLIVE, fontSize: 40, fontWeight: FontWeight.bold)));
-          }
-          return StoryContentCustom(
-            onListen: () {
-              controller.playSound(pages[index].enUrl!);
+              child: Swiper(
+            loop: false,
+            itemBuilder: (BuildContext context, int index) {
+              if (index == pages.length - 1) {
+                return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(color: LIGHT_YELLOW, borderRadius: BorderRadius.circular(16)),
+                    child: Text("The End", style: TextStyle(color: OLIVE, fontSize: 40, fontWeight: FontWeight.bold)));
+              }
+              return StoryContentCustom(
+                onListen: () {
+                  controller.playSound(pages[index].enUrl!);
+                },
+                pageThumbnail: pages[controller.pageIndex.value].pageThumbnail,
+                enText: pages[controller.pageIndex.value].enText!,
+              );
             },
-            pageThumbnail: pages[controller.pageIndex.value].pageThumbnail,
-            enText: pages[controller.pageIndex.value].enText!,
-          );
-        },
-        itemCount: pages.length,
-        onIndexChanged: (index) {
-          controller.pageIndex.value = index;
-          controller.resetRecordDefault();
-          if (index == pages.length - 1) {
-            controller.isLastPage.value = true;
-          }
-        },
+            itemCount: pages.length,
+            onIndexChanged: (index) {
+              controller.pageIndex.value = index;
+              controller.resetRecordDefault();
+              if (index == pages.length - 1) {
+                controller.isLastPage.value = true;
+              }
+            },
           )),
           Obx(() {
-        if (controller.pageIndex.value == pages.length - 1) {
-          return SizedBox(
-            height: 120,
-            child: Container(
-              width: Get.width,
-              margin: EdgeInsets.symmetric(vertical: 35, horizontal: 16),
-              child: ButtonNormalCustom(
-                  onTap: () {},
-                  child: Text("Done", style: TextStyle(color: WHITE, fontSize: 16)),
-                  color: BRIGHT_YELLOW),
-            ),
-          );
-        }
-        return controlContainer();
+            if (controller.pageIndex.value == pages.length - 1) {
+              return SizedBox(
+                height: 120,
+                child: Container(
+                  width: Get.width,
+                  margin: EdgeInsets.symmetric(vertical: 35, horizontal: 16),
+                  child: ButtonNormalCustom(
+                      onTap: () {},
+                      child: Text("Done", style: TextStyle(color: WHITE, fontSize: 16)),
+                      color: BRIGHT_YELLOW),
+                ),
+              );
+            }
+            return controlContainer();
           })
         ]),
         Obx(() {
@@ -129,7 +130,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
                       return ButtonCircleCustom(
                           color: OLIVE,
                           onTap: () {
-                            controller.playFileRecord();
+                            controller.playRecordFile();
                           },
                           child: Icon(
                             _buildIconPlayer(),

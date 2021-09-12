@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobileapp/data/models/story.dart';
 import 'package:mobileapp/data/service/account_service.dart';
 import 'package:mobileapp/data/service/record_service.dart';
 import 'package:mobileapp/data/service/sound_service.dart';
 import 'package:mobileapp/widgets/toast_custom.dart';
-import 'package:mobileapp/data/service/file_service.dart';
 import 'package:mobileapp/data/service/story_service.dart';
 
 enum StoryPageState {
@@ -42,6 +42,7 @@ class RecordStoryController extends GetxController {
   String? tempRecordPath;
   Rx<String?> recordPath = Rx<String?>(null);
 
+  // For UI buttons state
   bool get isShowTrashButton => state.value == StoryPageState.TEMP_RECORD || state.value == StoryPageState.RECORDED;
   bool get isShowPlayButton => state.value == StoryPageState.TEMP_RECORD || state.value == StoryPageState.RECORDED;
   bool get isShowSaveButton => state.value == StoryPageState.TEMP_RECORD;
@@ -61,6 +62,9 @@ class RecordStoryController extends GetxController {
   }
 
   Future startRecord() async {
+    await soundService.stop();
+    var hasPermission = await _requestPermission();
+    if (!hasPermission) return;
     await countDown();
     tempRecordPath = await recordService.getTempRecordPath();
     return recordService.record(tempRecordPath!);
@@ -72,7 +76,7 @@ class RecordStoryController extends GetxController {
     return Future;
   }
 
-  playFileRecord() {
+  playRecordFile() {
     switch (soundService.playerState.value) {
       case PlayerState.PLAYING:
         soundService.pause();
@@ -91,8 +95,8 @@ class RecordStoryController extends GetxController {
   }
 
   Future saveRecord() async {
-    var path = await recordService.saveStoryRecord(
-        accountService.me.value!.id, story.value!.id, pageIndex.value, tempRecordPath!);
+    var path = await _getRecordFilePath();
+    recordService.saveStoryRecord(path, tempRecordPath!);
     recordPath.value = path;
     state.value = StoryPageState.RECORDED;
     resetRecordDefault();
@@ -100,11 +104,13 @@ class RecordStoryController extends GetxController {
     return Future;
   }
 
-  deleteRecord() {
-    recordService.deleteStoryRecord(recordPath.value!);
+  Future deleteRecord() async {
+    var path = await _getRecordFilePath();
+    recordService.deleteStoryRecord(path);
     state.value = StoryPageState.NOT_RECORD_YET;
     resetRecordDefault();
     showToast("Record was deleted");
+    return Future;
   }
 
   Future resetRecordDefault() async {
@@ -121,14 +127,14 @@ class RecordStoryController extends GetxController {
     int result = await soundService.stop();
   }
 
-  Future loadStory() async {
+  Future _loadStory() async {
     try {
       story.value = await storyService.getStory();
     } catch (e) {}
   }
 
   Future _prepareStateAtPageId(int pageId) async {
-    var path = await recordService.getRecordPath(accountService.me.value!.id, story.value!.id, pageId);
+    var path = await _getRecordFilePath();
     if (File(path).existsSync()) {
       recordPath.value = path;
       state.value = StoryPageState.RECORDED;
@@ -136,21 +142,30 @@ class RecordStoryController extends GetxController {
       recordPath.value = null;
       state.value = StoryPageState.NOT_RECORD_YET;
     }
-    print("@id $pageId @path $path");
     return Future;
   }
 
-  registerPageChange() {
+  Future<String> _getRecordFilePath() async {
+    var rootPath = await recordService.rootPath;
+    return rootPath + "/" + accountService.me.value!.id + "/" + story.value!.id + "/" + 'page${pageIndex}.m4a';
+  }
+
+  _registerPageChange() {
     pageIndex.listen((id) async {
       _prepareStateAtPageId(id);
     });
     _prepareStateAtPageId(0);
   }
 
+  Future<bool> _requestPermission() {
+    return recordService.requestPermission();
+  }
+
   @override
   void onReady() {
-    loadStory().then((value) {
-      registerPageChange();
+    _loadStory().then((value) {
+      _registerPageChange();
+      _requestPermission();
     });
     super.onReady();
   }

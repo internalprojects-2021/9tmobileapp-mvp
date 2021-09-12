@@ -23,9 +23,8 @@ class FileService extends GetxService {
     return rootPath + "/" + fileName;
   }
 
-  Future<String> createFilePath(String filePath, String fileName) async {
-    String rootPath = await getRootPath();
-    var d = Directory(rootPath + "/" + filePath);
+  String createFilePath(String filePath, String fileName) {
+    var d = Directory(filePath);
     if (!d.existsSync()) {
       d.createSync(recursive: true);
     }
