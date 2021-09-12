@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:mobileapp/data/common/rest_api.dart';
-// import 'package:mobileapp/data/service/auth_service.dart';
 
 class BaseService extends GetxService {
   late RestAPI client;
