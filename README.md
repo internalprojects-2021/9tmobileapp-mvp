@@ -1,11 +1,20 @@
-# mobileapp project created by @Wifihouse
+# mobileapp project created by @WifiHouse
 
 
 # Preview
 
-| Android device | iOS device |
+| Android version | iOS version |
 | :--------------: | :---------------------: |
 |     ![](demo/android-demo.gif)     |    ![](demo/iOS-demo.gif)     |
+
+\
+\
+<br/>
+
+# How to test
+1. Input any user ID to create local account\
+Record files will be stored based on user ID
+2. Tap "Skip login" to login with default user ID = "001"
 
 \
 \
@@ -41,7 +50,7 @@ Please run: `cd ios && pod install`
 <br/>
 
 
-# Feature
+# Features
 ### Display the list of story pages
 
 - [x] Display the list of story pages
@@ -50,6 +59,7 @@ Please run: `cd ios && pod install`
 - [x] Record audio should work properly on both iOS and Android.
 
 <br/>
+
 ### Optional features
 
 - [x] Save permanently recording audio for each page to local storage.
@@ -57,6 +67,7 @@ Please run: `cd ios && pod install`
 - [x] Organize local audio files base on account id
 
 <br/>
+
 ### Extend features
 
 - [x] Support login by any account id to test audio files management
@@ -64,6 +75,7 @@ Please run: `cd ios && pod install`
 
 
 <br/>
+
 ### Unknown issues
 
 - [ ] Standard sound depends on sound controller
@@ -79,4 +91,4 @@ Format: m4a
 \
 <br/>
 # How to generate model
-flutter pub run build_runner build --delete-conflicting-outputs
+`flutter pub run build_runner build --delete-conflicting-outputs`
