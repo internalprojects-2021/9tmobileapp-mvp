@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobileapp/data/models/story.dart';
 import 'package:mobileapp/data/service/account_service.dart';
@@ -78,10 +76,10 @@ class RecordStoryController extends GetxController {
 
   playRecordFile() {
     switch (soundService.playerState.value) {
-      case PlayerState.PLAYING:
+      case SoundPlayerState.PLAYING:
         soundService.pause();
         break;
-      case PlayerState.PAUSED:
+      case SoundPlayerState.PAUSED:
         soundService.resume();
         break;
       default:
@@ -121,12 +119,12 @@ class RecordStoryController extends GetxController {
     return Future;
   }
 
-  playSound(String url) async {
-    await soundService.playUrl(url);
+  Future playSound(String url) {
+    return soundService.playUrl(url);
   }
 
-  stopSound() async {
-    int result = await soundService.stop();
+  Future stopSound() {
+    return soundService.stop();
   }
 
   Future _loadStory() async {

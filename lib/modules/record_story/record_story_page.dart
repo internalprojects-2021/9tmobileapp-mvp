@@ -1,11 +1,11 @@
 import 'dart:ui';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobileapp/common/theme/color.dart';
 import 'package:mobileapp/data/models/story.dart';
 import 'package:mobileapp/data/models/story_page.dart';
+import 'package:mobileapp/data/service/sound_service.dart';
 import 'package:mobileapp/modules/record_story/record_story_controller.dart';
 import 'package:mobileapp/widgets/app_bar_custom.dart';
 import 'package:mobileapp/widgets/button_circle_custom.dart';
@@ -48,7 +48,7 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
                   controller.playSound(pages[index].enUrl!);
                 },
                 pageThumbnail: pages[controller.pageIndex.value].pageThumbnail,
-                enText: pages[controller.pageIndex.value].enText!,
+                enText: pages[controller.pageIndex.value].enText!.trim(),
               );
             },
             itemCount: pages.length,
@@ -110,7 +110,6 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Obx(() {
-              bool isRecored = controller.recordService.hasRecorded.value;
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 76),
                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -190,10 +189,10 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
 
   IconData _buildIconPlayer() {
     switch (controller.soundService.playerState.value) {
-      case PlayerState.PLAYING:
+      case SoundPlayerState.PLAYING:
         return Icons.pause;
-      case PlayerState.PAUSED:
-        return Icons.play_arrow;
+      // case SoundPlayerState.PAUSED:
+      //   return Icons.play_arrow;
       default:
         return Icons.play_arrow;
     }

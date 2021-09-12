@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:mobileapp/modules/splash/splash_controller.dart';
 import 'package:mobileapp/widgets/wrap_page.dart';
+import 'login_controller.dart';
 
-class SplashPage extends GetWidget<SplashController> {
+class LoginPage extends GetWidget<LoginController> {
   @override
   Widget build(BuildContext context) {
     return WrapPage(

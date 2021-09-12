@@ -1,9 +1,32 @@
-# Flutter project created by @Wifihouse
+# mobileapp project created by @Wifihouse
 
-AppName: mobileapp
+# How to build
 
-A new Flutter project.
+## 1. By command line
 
-## How to generate model
+Staging: `flutter run -t lib/common/config/main_stag.dart`\
+Production: `flutter run -t lib/common/config/main_prod.dart`
+\
+<br/>
 
+
+## 2. By VisualCode
+Available .vscode/launch.json.\
+Run from "Run and Debug" menu
+\
+<br/>
+## 3. By AndroidStudio
+
+Setup build environment\
+Staging entry point: `lib/common/config/main_stag.dart`\
+Production entry point: `lib/common/config/main_prod.dart`
+\
+\
+\
+<br/>
+
+
+# Feature done
+
+# How to generate model
 flutter pub run build_runner build --delete-conflicting-outputs

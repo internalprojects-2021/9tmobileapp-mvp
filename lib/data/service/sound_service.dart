@@ -1,48 +1,62 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
 import 'package:mobileapp/data/common/base_service.dart';
+import 'package:just_audio/just_audio.dart';
+
+enum SoundPlayerState { PLAYING, PAUSED, COMPLETED, IDLE }
 
 class SoundService extends BaseService {
-  AudioPlayer audioPlayer = AudioPlayer();
+  final player = AudioPlayer();
   Rx<Duration?> position = Rx<Duration?>(Duration());
   Rx<Duration?> duration = Rx<Duration?>(null);
-  Rx<PlayerState> playerState = Rx<PlayerState>(PlayerState.COMPLETED);
+  Rx<SoundPlayerState> playerState = Rx<SoundPlayerState>(SoundPlayerState.IDLE);
 
-  playUrl(String url) async {
-    int result = await audioPlayer.play(url);
+  Future playUrl(String url) async {
+    duration.value = await player.setUrl(url);
+    player.play();
+    playerState.value = SoundPlayerState.PLAYING;
+    return Future;
   }
 
-  playLocalPath(String filePath) async {
-    // await audioPlayer.stop();
-    // await audioPlayer.release();
-    int result = await audioPlayer.play(filePath, isLocal: true);
-    print("@result $result");
+  Future playLocalPath(String filePath) async {
+    duration.value = await player.setFilePath(filePath);
+    player.play();
+    playerState.value = SoundPlayerState.PLAYING;
+    return Future;
   }
 
-  pause() async {
-    int result = await audioPlayer.pause();
+  Future pause() {
+    playerState.value = SoundPlayerState.PAUSED;
+    return player.pause();
   }
 
-  resume() async {
-    int result = await audioPlayer.resume();
+  Future resume() {
+    playerState.value = SoundPlayerState.PLAYING;
+    return player.play();
   }
 
-  stop() async {
-    await audioPlayer.stop();
-    // await audioPlayer.release();
+  Future stop() {
+    return player.stop();
   }
 
   @override
   void onReady() {
-    audioPlayer.onDurationChanged.listen((Duration d) {
-      duration.value = d;
+    player.positionStream.listen((event) {
+      position.value = event;
     });
-    audioPlayer.onAudioPositionChanged.listen((Duration p) {
-      position.value = p;
+    player.playerStateStream.listen((event) {
+      if (event.processingState == ProcessingState.completed) {
+        playerState.value = SoundPlayerState.COMPLETED;
+      }
     });
-    audioPlayer.onPlayerStateChanged.listen((PlayerState s) {
-      playerState.value = s;
-    });
+
+    // Not working when play with local audio file
+    // player.playingStream.listen((event) {
+    //   if (event) {
+    //     playerState.value = SoundPlayerState.PLAYING;
+    //   } else {
+    //     playerState.value = SoundPlayerState.PAUSED;
+    //   }
+    // });
     super.onReady();
   }
 }

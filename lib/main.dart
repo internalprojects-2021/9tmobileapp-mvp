@@ -48,7 +48,7 @@ void mainDelegate() async {
     debugShowCheckedModeBanner: false,
     theme: appThemeData,
     getPages: AppPages.pages,
-    initialRoute: Routes.SPLASH,
+    initialRoute: Routes.LOGIN,
     initialBinding: BindingsBuilder(() {}),
   );
 

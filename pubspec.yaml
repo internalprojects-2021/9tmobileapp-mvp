@@ -31,10 +31,10 @@ dependencies:
   flutter_statusbarcolor_ns: ^0.3.0-nullsafety
   cached_network_image: ^3.0.0
   card_swiper: ^1.0.4  
-  audioplayers: ^0.20.0
   percent_indicator: ^3.0.1
   fluttertoast: ^8.0.8
   permission_handler: ^8.1.6
+  just_audio: ^0.9.11
   
 
 dev_dependencies:
