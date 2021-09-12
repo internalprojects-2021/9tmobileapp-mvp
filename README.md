@@ -1,5 +1,15 @@
 # mobileapp project created by @Wifihouse
 
+
+# Preview
+
+| Android device | iOS device |
+| :--------------: | :---------------------: |
+|     ![](demo/android-demo.gif)     |    ![](demo/iOS-demo.gif)     |
+
+\
+\
+<br/>
 # How to build
 
 ## 1. By command line
@@ -39,15 +49,32 @@ Please run: `cd ios && pod install`
 - [x] The story page should support showing both image and text, you can prefer the storyteller design part in figma for more details.
 - [x] Record audio should work properly on both iOS and Android.
 
+<br/>
+### Optional features
+
+- [x] Save permanently recording audio for each page to local storage.
+- [x] Allows the user to record more than one audio version.
+- [x] Organize local audio files base on account id
+
+<br/>
+### Extend features
+
+- [x] Support login by any account id to test audio files management
+- [x] Play standard audio
 
 
-# Preview
+<br/>
+### Unknown issues
 
-| Android device | iOS device |
-| :--------------: | :---------------------: |
-|     ![](demo/android-demo.gif)     |    ![](demo/iOS-demo.gif)     |
-
+- [ ] Standard sound depends on sound controller
 \
+\
+<br/>
+
+# Audio files structure
+`..internal-package/record/<accountID>/<storyID>/<pageNumber>.m4a`
+
+Format: m4a
 \
 \
 <br/>
