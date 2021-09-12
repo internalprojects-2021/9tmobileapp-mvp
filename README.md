@@ -24,9 +24,32 @@ Production entry point: `lib/common/config/main_prod.dart`
 \
 \
 <br/>
+## Note Run on iOS
+Please run: `cd ios && pod install`
+\
+\
+<br/>
 
 
-# Feature done
+# Feature
+### Display the list of story pages
 
+- [x] Display the list of story pages
+- [x] Users can swipe left and right to move around pages
+- [x] The story page should support showing both image and text, you can prefer the storyteller design part in figma for more details.
+- [x] Record audio should work properly on both iOS and Android.
+
+
+
+# Preview
+
+| Android device | iOS device |
+| :--------------: | :---------------------: |
+|     ![](demo/android-demo.gif)     |    ![](demo/iOS-demo.gif)     |
+
+\
+\
+\
+<br/>
 # How to generate model
 flutter pub run build_runner build --delete-conflicting-outputs
