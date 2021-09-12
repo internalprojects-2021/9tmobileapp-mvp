@@ -13,7 +13,10 @@ class SoundService extends BaseService {
   }
 
   playLocalPath(String filePath) async {
+    // await audioPlayer.stop();
+    // await audioPlayer.release();
     int result = await audioPlayer.play(filePath, isLocal: true);
+    print("@result $result");
   }
 
   pause() async {
@@ -26,7 +29,7 @@ class SoundService extends BaseService {
 
   stop() async {
     await audioPlayer.stop();
-    await audioPlayer.release();
+    // await audioPlayer.release();
   }
 
   @override

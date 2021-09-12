@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mobileapp/common/theme/color.dart';
 
 class AppBarCustom extends StatefulWidget {
-  final Function onBack;
+  final Function? onBack;
   final String title;
   final Function onMenu;
   const AppBarCustom({
     Key? key,
-    required this.onBack,
+    this.onBack,
     required this.title,
     required this.onMenu,
   }) : super(key: key);
@@ -23,18 +24,16 @@ class _AppBarCustomState extends State<AppBarCustom> {
         height: 50,
         margin: EdgeInsets.symmetric(vertical: 8),
         padding: EdgeInsets.symmetric(horizontal: 20),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           IconButton(
               onPressed: () {
-                widget.onBack();
+                Get.back();
               },
               splashRadius: 20,
               icon: Icon(Icons.arrow_back_ios, color: OLIVE)),
           Text(
             widget.title,
-            style: TextStyle(
-                color: OLIVE, fontSize: 14, fontWeight: FontWeight.bold),
+            style: TextStyle(color: OLIVE, fontSize: 14, fontWeight: FontWeight.bold),
           ),
           IconButton(
               onPressed: () {

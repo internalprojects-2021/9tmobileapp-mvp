@@ -104,13 +104,15 @@ class RecordStoryController extends GetxController {
     return Future;
   }
 
-  Future deleteRecord() async {
-    var path = await _getRecordFilePath();
-    recordService.deleteStoryRecord(path);
+  deleteRecord() {
+    if (state.value == StoryPageState.RECORDED) {
+      recordService.deleteStoryRecord(recordPath.value!);
+    } else if (state.value == StoryPageState.TEMP_RECORD) {
+      recordService.deleteStoryRecord(tempRecordPath!);
+    }
     state.value = StoryPageState.NOT_RECORD_YET;
     resetRecordDefault();
     showToast("Record was deleted");
-    return Future;
   }
 
   Future resetRecordDefault() async {

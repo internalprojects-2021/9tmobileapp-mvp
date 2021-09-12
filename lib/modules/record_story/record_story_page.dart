@@ -26,8 +26,9 @@ class RecordStoryPage extends GetWidget<RecordStoryController> {
         Column(children: [
           Obx(() {
             return AppBarCustom(
-              onBack: () {},
-              onMenu: () {},
+              // onBack: () {},
+              onMenu: () {
+              },
               title: "Page ${controller.pageIndex.value + 1}/${pages.length}",
             );
           }),
