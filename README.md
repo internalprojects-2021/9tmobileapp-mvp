@@ -16,6 +16,13 @@
 
 ## How to build
 
+### Flutter version
+
+Flutter 2.2.3 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision f4abaa0735 (2 months ago) • 2021-07-01 12:46:11 -0700
+Engine • revision 241c87ad80
+Tools • Dart 2.13.4
+
 ### 1. By command line
 
 Staging: `flutter run -t lib/common/config/main_stag.dart`\
